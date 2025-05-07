@@ -45,32 +45,39 @@ def count_turns(path):
             turns += 1
     return turns
 
-# -------------------------------
-# Streamlit App Starts
+# Streamlit page setup
 st.set_page_config(page_title="Pathfinder Puzzle", layout="centered")
 
+# Sliders for dynamic grid size
 ROWS = st.sidebar.slider("Grid Rows", 4, 10, 5)
 COLS = st.sidebar.slider("Grid Columns", 4, 10, 5)
 
-# Game state setup
-if "grid" not in st.session_state:
+# Automatically reset grid if size changes
+if ("prev_rows" not in st.session_state or 
+    "prev_cols" not in st.session_state or 
+    ROWS != st.session_state.prev_rows or 
+    COLS != st.session_state.prev_cols):
+    
     st.session_state.grid = np.zeros((ROWS, COLS), dtype=int)
     st.session_state.start_time = None
     st.session_state.start_pos = (0, 0)
     st.session_state.end_pos = (ROWS - 1, COLS - 1)
     st.session_state.player_path = []
+    st.session_state.prev_rows = ROWS
+    st.session_state.prev_cols = COLS
 
+# Title and instructions
 st.title("🧠 Pathfinder Puzzle")
 st.write("Click cells to toggle obstacles. Then click **Start Game** to solve the path.")
 
-# Draw the grid with buttons
+# Draw grid with interactive buttons
 for i in range(ROWS):
     cols = st.columns(COLS)
     for j in range(COLS):
         label = f"{i},{j}"
         cell = st.session_state.grid[i, j]
 
-        # Show AI path in blue if solved
+        # Display path result in blue
         if (i, j) in st.session_state.get("player_path", []):
             btn_label = "🟦"
         elif (i, j) == st.session_state.start_pos:
@@ -86,7 +93,7 @@ for i in range(ROWS):
             if (i, j) not in [st.session_state.start_pos, st.session_state.end_pos]:
                 st.session_state.grid[i, j] = 1 - cell  # Toggle obstacle
 
-# Reset grid button
+# Reset button
 st.button("Reset Grid", on_click=lambda: st.session_state.update({
     "grid": np.zeros((ROWS, COLS), dtype=int),
     "player_path": []
@@ -97,7 +104,7 @@ if st.button("Start Game"):
     st.session_state.start_time = time.time()
     st.success("Game started! Navigate mentally and then click 'End Game' when done.")
 
-# End game and run BFS
+# Solve and log results
 if st.button("End Game"):
     if st.session_state.start_time:
         time_taken = time.time() - st.session_state.start_time
@@ -105,8 +112,6 @@ if st.button("End Game"):
 
         path = bfs_solver(st.session_state.grid, st.session_state.start_pos, st.session_state.end_pos)
         st.session_state.player_path = path if path else []
-
-        st.experimental_rerun()  # 👈 force redraw so 🟦 appears right away
 
         if path:
             path_length = len(path)
@@ -116,10 +121,18 @@ if st.button("End Game"):
             st.write(f"Number of turns: {num_turns}")
             st.text(f"Path: {path}")
 
-            # Log puzzle data
+            # Count obstacles
             num_obstacles = int(np.sum(st.session_state.grid))
-            difficulty = "easy" if time_taken <= 15 else "medium" if time_taken <= 30 else "hard"
 
+            # Classify difficulty based on time
+            if time_taken <= 15:
+                difficulty = "easy"
+            elif time_taken <= 30:
+                difficulty = "medium"
+            else:
+                difficulty = "hard"
+
+            # Log data
             data = {
                 "grid_rows": ROWS,
                 "grid_cols": COLS,
@@ -130,6 +143,7 @@ if st.button("End Game"):
                 "difficulty_label": difficulty
             }
 
+            # Append to CSV
             csv_file = "puzzle_data.csv"
             file_exists = os.path.isfile(csv_file)
 
@@ -140,10 +154,11 @@ if st.button("End Game"):
                 writer.writerow(data)
 
             st.success("📝 Puzzle data saved to CSV!")
+
         else:
             st.error("❌ No path found. This puzzle is unsolvable.")
             st.session_state.player_path = []
 
-# Show obstacle grid
+# Grid visual (numeric)
 st.write("Obstacle Grid (1 = blocked):")
 st.dataframe(st.session_state.grid)
