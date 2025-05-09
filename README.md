@@ -31,7 +31,7 @@
 - **Features**: `grid_rows`, `grid_cols`, `num_obstacles`, `path_length`, `num_turns`, `time_to_solve`
 - **Label**: `difficulty_label`
 - **Accuracy**: ✅ 100% on current test set  
-  *(Note: high accuracy may reflect a small or separable dataset.)*
+  
 
 ---
 
