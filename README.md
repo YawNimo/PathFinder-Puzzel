@@ -1,71 +1,83 @@
-🧠 PathFinder Puzzle
-PathFinder Puzzle is a mini-game that combines logic-based gameplay with machine learning. The game challenges users to navigate from a starting point to a goal on a customizable grid filled with obstacles. Behind the scenes, an AI model evaluates each puzzle's difficulty based on how long it takes a user to solve it and other puzzle characteristics.
+# 🧠 PathFinder Puzzle
 
-🚀 Project Description
-Goal: Design an interactive puzzle game that helps relieve stress and engages users through brain-teasing challenges.
+**PathFinder Puzzle** is a logic-based mini-game that challenges users to find a path from a start point to a goal across a customizable grid filled with obstacles. The game integrates a machine learning model that predicts puzzle difficulty based on player performance.
 
-AI Component: A Random Forest machine learning model is trained to classify puzzles into difficulty levels (easy, medium, hard) based on gameplay data like:
+---
 
-Grid size
+## 🚀 Project Description
 
-Number of obstacles
+- **Goal**: Create an interactive, stress-relieving game that sharpens critical thinking.
+- **AI Component**: A `RandomForestClassifier` predicts puzzle difficulty level (`easy`, `medium`, `hard`) using the following features:
+  - Grid size (`grid_rows`, `grid_cols`)
+  - Number of obstacles
+  - Path length
+  - Number of turns
+  - Time to solve
 
-Path length
+---
 
-Number of turns
+## 🕹️ Gameplay Instructions
 
-Time to solve
+- Click cells to add/remove obstacles.
+- Click **Start Game** to begin solving.
+- Click **End Game** to stop the timer and log results.
+- Data is stored in `puzzle_data.csv`.
 
-🕹️ Gameplay
-Click cells on the grid to add/remove obstacles.
+---
 
-Use Start Game to begin solving.
+## 📊 Machine Learning Model
 
-Use End Game to stop the timer and let the AI analyze your path.
+- **Model**: `RandomForestClassifier` with `stratify=y` for balanced class sampling
+- **Features**: `grid_rows`, `grid_cols`, `num_obstacles`, `path_length`, `num_turns`, `time_to_solve`
+- **Label**: `difficulty_label`
+- **Accuracy**: ✅ 100% on current test set  
+  *(Note: high accuracy may reflect a small or separable dataset.)*
 
-Data is saved locally as puzzle_data.csv.
+---
 
-📊 Machine Learning Model
-The model uses RandomForestClassifier with stratify=y to ensure class balance during training.
+## 📌 Feature Importance (Top Predictors)
 
-Features: grid_rows, grid_cols, num_obstacles, path_length, num_turns, time_to_solve
+1. `time_to_solve` – most influential  
+2. `num_obstacles`  
+3. `num_turns`  
+4. `path_length`  
 
-Label: difficulty_label (easy, medium, hard)
+---
 
-Achieved 100% accuracy on test set (note: this may indicate overfitting given limited data)
+## 📂 Files
 
-📌 Feature Importance (Top Predictors):
-time_to_solve – most influential
+- `pathfinder_game.py`: Streamlit game interface
+- `puzzle_data.csv`: Collected game data (combined from all players)
+- `PathFinder-Puzzel.ipynb`: Jupyter notebook with model training and testing
+- `README.md`: This documentation
 
-num_obstacles
+---
 
-num_turns
+## 👨‍👩‍👧‍👦 Team Members
 
-path_length
+- Yaw Nimo-Agyare  
+- Trevor Hitchcock  
+- Kaylie Neal  
+- Sahil Ghelani  
 
-📂 Files
-pathfinder_game.py: Streamlit game interface
+---
 
-puzzle_data.csv: Collected gameplay data (from you + team members)
+## 💡 The Three C's
 
-PathFinder-Puzzel.ipynb: Jupyter Notebook for training/testing ML model and analyzing feature importance
+- **Curiosity** – Encourages players to explore puzzle-building and strategy  
+- **Connections** – Bridges game design, machine learning, and user behavior  
+- **Creating Value** – Offers engaging gameplay and meaningful analytics
 
-README.md: Project documentation
+---
 
-👨‍👩‍👧‍👦 Team Members
-Yaw Nimo-Agyare
-(List your teammates and assign slides as per project requirement)
+## ✅ Future Growth
 
-💡 The Three C’s
-Curiosity: Encourages players to experiment with grid design and path planning
+- Auto-generate puzzles of varying shapes and sizes  
+- Match puzzles to player skill level using the ML model  
+- Expand with:
+  - Multiplayer
+  - Rankings
+  - Daily challenges
+  - Visualizations or path hints
 
-Connections: Bridges game design, data science, and teamwork
-
-Creating Value: Demonstrates how a fun puzzle game can offer insights into difficulty modeling
-
-✅ How This Game Can Grow
-Can generate unlimited puzzles with varying sizes and shapes
-
-Predictive difficulty helps match player skill level
-
-Easy to expand with leaderboard, multiplayer, or adaptive challenges
+---
